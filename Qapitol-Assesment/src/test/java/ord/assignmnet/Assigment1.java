@@ -1,16 +1,21 @@
 package ord.assignmnet;
+
 import java.time.Duration;
+import java.util.Iterator;
+import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
+public class Assigment1
+{
+@Test
+	void demoTest() throws InterruptedException{
 
-public class Assigment {
-
-	public static void main(String[] args) throws InterruptedException 
-	{
 		WebDriver driver;
 		String url = "https://www.amazon.in/";
 		String path = System.getProperty("user.dir");  //user current working directory
@@ -31,11 +36,46 @@ public class Assigment {
 		driver.findElement(By.xpath("//span[text()='Smart Televisions']")).click();
 		WebElement chBox =driver.findElement(By.xpath("//li[@id='p_89/Samsung']//i"));
 		chBox.click();
-		Thread.sleep(5000);
+		Thread.sleep(3000);
+
+
 		driver.findElement(By.xpath("//span[@class='a-button a-button-dropdown a-button-small']")).click();
 		driver.findElement(By.xpath("//a[text()='Price: High to Low']")).click();
+
+
+		String MainWindow= driver.getWindowHandle();		
+
 		driver.findElement(By.xpath("//div[@class='s-main-slot s-result-list s-search-results sg-row']/div[3]")).click();
-		//driver.findElement(By.xpath("//h1[text()=' About this item ']"));
+		String MainWindow2=driver.getWindowHandle();
+
+
+		System.out.println("WindId"+MainWindow +" " +MainWindow);
+
+		Set<String> childWind= driver.getWindowHandles();
+		Iterator<String> itr =childWind.iterator();
+		while(itr.hasNext())			
+		{
+		String s1 =itr.next();
 		
+		
+		if(!MainWindow2.equalsIgnoreCase(s1))			
+		{ 
+			System.out.println("WindID :"+s1);
+			driver.switchTo().window(s1);
+			WebElement el = driver.findElement(By.xpath("//h1[text()=' About this item ']"));
+	
+			JavascriptExecutor j = (JavascriptExecutor)driver;   //wrap the driver
+			j.executeScript("arguments[0].scrollIntoView(true)", el);
+			String actual = el.getText();
+			System.out.println(actual);
+			String expected = "About this item";
+	
+			Assert.assertEquals(actual, expected);
+			
+			System.out.println("About this item section is Present ");
 		}
+		}
+		driver.quit();
+
+	}
 }
